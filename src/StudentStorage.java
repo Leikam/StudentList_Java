@@ -1,6 +1,14 @@
 import java.util.HashMap;
+import java.util.logging.Logger;
 
 public class StudentStorage {
+
+    private static final Logger logger = Logger.getLogger(StudentStorage.class.getName());
+    static {
+        logger.setParent(Main.logger);
+        logger.setUseParentHandlers(true);
+    }
+
     private HashMap<String, Student> storage;
 
     public StudentStorage() {
@@ -12,8 +20,9 @@ public class StudentStorage {
         try {
             String name = components[0] + " " + components[1];
             storage.put(name, new Student(name, components[3], components[2]));
+            logger.info(String.format("Добавляем пользователя: %s", data));
         } catch (ArrayIndexOutOfBoundsException e) {
-            System.out.print("Обращение к массиву компонентов по слишком большому индексу");
+            logger.severe("Обращение к массиву компонентов по слишком большому индексу");
         }
     }
 

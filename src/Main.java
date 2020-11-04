@@ -1,7 +1,15 @@
+import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 public class Main {
+
+    public static final Logger logger = Logger.getLogger(Main.class.getName());
+
     private static String addCommand = "add Василий Петров " +
             "vasily.petrov@gmail.com +79787775747";
     private static String commandExamples = "\t" + addCommand + "\n" +
@@ -11,6 +19,18 @@ public class Main {
     private static String helpText = "Command examples:\n" + commandExamples;
 
     public static void main(String[] args) {
+        logger.info("Приложение запустилось");
+        try {
+            final FileHandler handler = new FileHandler("StudentList_Java.log");
+            handler.setFormatter(new SimpleFormatter());
+            logger.addHandler(handler);
+            logger.info("Логирование настроено");
+        } catch (SecurityException e) {
+            logger.warning("Не удалось настроить файл логирования из-за политик безопасности.");
+        } catch (IOException e) {
+            logger.warning("Не удалось настроить файл логирования.");
+        }
+
         Scanner scanner = new Scanner(System.in);
         StudentStorage executor = new StudentStorage();
         while (true) {
@@ -27,17 +47,17 @@ public class Main {
                 } else if (tokens[0].equals("remove")) {
                     executor.removeStudent(tokens[1]);
                 } else if (tokens[0].equals("count")) {
-                    System.out.println("There are " + executor.getCount() + " customers");
+                    logger.info("There are " + executor.getCount() + " customers");
                 } else if (tokens[0].equals("help")) {
-                    System.out.println(helpText);
+                    logger.info(helpText);
                 } else {
-                    System.out.println(commandError);
+                    logger.warning(commandError);
                 }
 
             } catch (NoSuchElementException e) {
-                System.out.print("Не введена строка");
+                logger.log(Level.SEVERE, "Не введена строка");
             } catch (ArrayIndexOutOfBoundsException e) {
-                System.out.print("Запрос токена по слишком большому индексу");
+                logger.log(Level.SEVERE, "Запрос токена по слишком большому индексу");
             }
         }
     }
